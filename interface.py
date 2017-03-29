@@ -81,12 +81,24 @@ class Interface(object):
                 log.message = log.message + line
         return log_array
 
+    def search_by_message_level(self, start_time, end_time, message_level):
+        """
+        Search engine file with respect to time and message level
+        Returns EngineLog object list in given time range and given message level.
+        """
+        log_array = []
+        initial_array = self.search_engine(start_time, end_time)
+        for log in initial_array:
+            if log.message_level in message_level:
+                log_array.append(log)
+        return log_array
+
 def main():
     """
     Tesing the functionality of Interface class
     """
-    engine_file = "/home/shrenik/Desktop/opw/ovirt/logs/engine.log"
-    vdsm_file = "/home/shrenik/Desktop/opw/ovirt/logs/vdsm-1.log"
+    engine_file = "/home/ishani/ovirt/logs/engine.log"
+    vdsm_file = "/home/ishani/ovirt/logs/vdsm-1.log"
     eob = Interface(engine_file)
     vob = Interface(vdsm_file)
     start_time = "2017-02-23 09:28:30,142Z"
@@ -95,9 +107,12 @@ def main():
     log_array = eob.search_engine(start_time, end_time)
     log_array = vob.vdsm_log()
     log_array = vob.search_vdsm(start_time, end_time)
+    log_array = vob.search_by_message_level(start_time, end_time, ['DEBUG'])
 
     for log in log_array:
         print log.message
+        # if log.message_level == 'DEBUG':
+        #     print log.message
     print len(log_array)
 
 if __name__ == '__main__':
